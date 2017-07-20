@@ -1,4 +1,4 @@
-# wattle
+# wattle - A Decision Tree Algorithm Template.
 
 Currently under development..
 
