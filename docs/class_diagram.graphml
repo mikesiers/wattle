@@ -17,19 +17,23 @@
     <node id="n0">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="236.0" width="220.0" x="393.0" y="72.0"/>
+          <y:Geometry height="296.0" width="220.0" x="393.0" y="29.0"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.869140625" x="95.0654296875" y="4.0">Tree</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="201.859375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="219.244140625" x="2.0" y="30.1328125">root : Node
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="258.390625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="219.244140625" x="2.0" y="30.1328125">root : Node
 num_nodes : Integer
 -------------------------------
 Tree( data : pandas.DataFrame,
          build : Boolean,
+         test : Function,
          prune : Boolean,
+         criteria : Function,
          options : Dict )
 build( data : pandas.DataFrame,
+          test : Function,
           prune : Boolean,
+          criteria : Function,
           options : Dict ) : Void
 prune( criteria : Function ) : Boolean
 find_node( logic_rule : Dict ) : Node
@@ -78,18 +82,20 @@ to_string() : String
     <node id="n2">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="196.0" width="230.0" x="67.5" y="92.0"/>
+          <y:Geometry height="222.0" width="230.0" x="67.5" y="66.0"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="97.7626953125" y="4.0">Node</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="159.4609375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="226.1875" x="2.0" y="30.1328125">is_leaf : Boolean
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="187.7265625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="226.1875" x="2.0" y="30.1328125">is_leaf : Boolean
 is_root : Boolean
 data_points : pandas.DataFrame
 class_supports : Dict
 --------------------------------
 Node( data : pandas.DataFrame,
           build : Boolean,
-          prune : Boolean )
+          test : Function,
+          prune : Boolean,
+          criteria : Function )
 split( test : Function ) : Boolean
 prune( criteria : Function ) : Boolean
 to_string() : String<y:LabelModel>
