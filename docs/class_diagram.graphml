@@ -38,7 +38,7 @@ build( data : pandas.DataFrame,
 prune( prune_func : Function ) : Boolean
 find_node( logic_rule : Dict ) : Node
 get_rules() : List&lt;String&gt;
-to_string() : String<y:LabelModel>
+__str__() : String<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -65,7 +65,7 @@ split_test : Split_Test
 Branch( parent : Node,
             child : Node,
             split_test : Split_Test )
-to_string() : String
+__str__() : String
 <y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
@@ -102,7 +102,7 @@ get_possible_splits() : Dict&lt;List&gt;
 get_supports() : Dict
 get_split_supports( split_test : Split_Test )
   : List&lt;Dict&gt;
-to_string() : String<y:LabelModel>
+__str__() : String<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -118,7 +118,7 @@ to_string() : String<y:LabelModel>
     <node id="n3">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="178.0" width="189.0" x="423.5" y="356.5"/>
+          <y:Geometry height="185.0" width="189.0" x="423.5" y="353.0"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="60.3203125" x="64.33984375" y="4.0">Split_Test</y:NodeLabel>
@@ -131,7 +131,7 @@ Split( attribute_type : String,
         split_value : Float )
 is_numerical() : Boolean
 is_categorical() : Boolean
-to_string() : String
+__str__() : String
 <y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
