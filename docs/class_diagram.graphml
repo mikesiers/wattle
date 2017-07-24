@@ -100,7 +100,7 @@ split( test : Function ) : Boolean
 prune( criteria : Function ) : Boolean
 get_possible_splits() : Dict&lt;List&gt;
 get_supports() : Dict
-get_split_supports( split : Dict ) : Dict
+get_split_supports( split : Dict ) : List&lt;Dict&gt;
 to_string() : String<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
