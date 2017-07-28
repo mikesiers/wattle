@@ -106,7 +106,7 @@ Node( data : pandas.DataFrame,
           prune_func : Function )
 split( split_func : Function ) : Boolean
 prune( prune_func : Function ) : Boolean
-get_possible_splits() : Dict&lt;List&gt;
+get_possible_splits() : List&lt;Split_Test&gt;
 get_supports() : Dict
 get_split_supports( split_test : Split_Test )
   : List&lt;Dict&gt;
