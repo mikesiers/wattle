@@ -17,7 +17,7 @@
     <node id="n0">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="350.0" width="244.0" x="396.0" y="-75.5"/>
+          <y:Geometry height="350.0" width="244.0" x="396.0" y="-98.66666666666663"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.869140625" x="107.0654296875" y="4.0">Tree</y:NodeLabel>
@@ -90,11 +90,11 @@ __ ne__( self : Node,
     <node id="n2">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="420.0" width="290.0" x="35.5" y="-110.49999999999999"/>
+          <y:Geometry height="466.33333333333337" width="290.0" x="35.5" y="-156.83333333333331"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="127.7626953125" y="4.0">Node</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="385.5859375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="288.677734375" x="2.0" y="30.1328125">is_leaf : Boolean
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="427.984375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="288.677734375" x="2.0" y="30.1328125">is_leaf : Boolean
 is_root : Boolean
 data_points : pandas.DataFrame
 class_supports : Dict
@@ -114,6 +114,9 @@ get_possible_splits() : List&lt;Split_Test&gt;
 get_supports() : Dict
 get_split_supports( split_test : Split_Test )
   : List&lt;Dict&gt;
+num_records() : Number
+num_errors( cost_sensitive : Boolean,
+                   cost_matrix : Dict ) : Number
 num_positive( positive_class : String ) : Number
 num_negative( positive_class : String ) : Number
 __str__() : String
