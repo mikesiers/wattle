@@ -90,11 +90,11 @@ __ ne__( self : Node,
     <node id="n2">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="517.6666666666667" width="290.0" x="35.5" y="-208.16666666666669"/>
+          <y:Geometry height="549.3333333333335" width="290.0" x="35.5" y="-239.83333333333337"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="127.7626953125" y="4.0">Node</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="484.515625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="288.677734375" x="2.0" y="30.1328125">is_leaf : Boolean
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="512.78125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="288.677734375" x="2.0" y="30.1328125">is_leaf : Boolean
 is_root : Boolean
 data_points : pandas.DataFrame
 class_attribute : String
@@ -112,8 +112,10 @@ Node( data : pandas.DataFrame,
           parent : Node,
           parent_branch : Branch )
 split( split_func : Function,
-        recursive : Boolean ) : Boolean
-prune( prune_func : Function ) : Boolean
+        recursive : Boolean,
+        split_func_args ) : Boolean
+prune( prune_func : Function,
+           prune_func_args ) : Boolean
 get_possible_splits() : List&lt;Split_Test&gt;
 get_supports() : Dict
 get_split_supports( split_test : Split_Test )
