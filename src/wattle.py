@@ -49,7 +49,7 @@ class Node:
           node. The function should return None if there were no good splits
           found.
         split_func_args (list): A list of arguments to pass to the split
-          function. They are passed in the order of the list.
+          function. They are passed in the same order as this list.
         is_root (boolean): Whether or not this Node is a root of a tree.
         parent (Node): The parent node of this node.
         parent_branch (Branch): The parent branch of this node.
@@ -81,6 +81,8 @@ class Node:
           returns a Split_Test object which describes the best split for this
           node. The function should return None if there were no good splits
           found.
+        split_func_args (list): A list of arguments to pass to the split
+          function. They are passed in the same order as this list.
         recursive (boolean): A flag which determines whether the resulting
           children should also be split.
 
@@ -95,7 +97,7 @@ class Node:
 
       # Find the best split based on the split function and create an empty
       # list of children which will be populated based on the split.
-      test = split_func(node, *split_func_args)
+      test = split_func(self, *split_func_args)
       children = []
       
       # If there was no suitable test found:
@@ -170,7 +172,39 @@ class Node:
           child.parent_branch = parent_branch
           children.append(child)
 
-      # Finally, set the children of this Node to be the child nodes that were
-      # created. This Node object is also no longer a leaf.
-      self.children = children
-      self.is_leaf = False
+      # If a split was performed, return True and set the children of this Node
+      # to be the child nodes that were created. This Node object is also no
+      # longer a leaf. If a split wasn't performed, return False.
+      if children:
+        self.children = children
+        self.is_leaf = False
+        return True
+      else:
+        return False
+
+    def prune(prune_func, prune_func_args):
+      """Removes the children from this node if the prune function says so.
+                                                                              
+      Args:
+        prune_func (function): A function which takes a node as input and
+          returns True if the node should be pruned, and False otherwise.
+        prune_func_args (list): A list of arguments to pass to the prune 
+          function. They are passed in the same order as this list.
+      Returns:
+        (boolean) : True if a split was performed, False otherwise.
+                                                                              
+      Raises:
+        ValueError: If any of this node's children are not leaves.
+      """
+      if not all(child.is_leaf for child in self.children):
+        raise ValueError("Can't prune a node with a non-leaf child.")
+
+      # If the prune function returns true, prune the node and return True.
+      # Otherwise, return False.
+      if prune_func(self, prune_func, *prune_func_args):
+        self.children = []
+        self.is_leaf = True
+        self.child_branches = []
+        return True
+      else:
+        return False
