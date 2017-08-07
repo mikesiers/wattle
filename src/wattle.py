@@ -258,3 +258,26 @@ class Node:
 
       # Finally, return the list of splits.
       return splits
+
+    def get_split_supports(split_test):
+      """Finds the supports for the children that would result from split_test.
+
+      Args:
+        split_test (Split_Test): Used to split the data.
+
+      Returns:
+        (List<Dict>): The i'th element in the list is the i'th class supports,
+          where the class supports are represented in a dictionary. Each key in
+          the dictionary is a class value. Each value is the support count for
+          that value.
+      """
+      # Create a copy of this object and split it using split_test.
+      temp_node = copy.deepcopy(self)
+      temp_node.split({return split_test})
+
+      # Add the support counts for each child to the return list.
+      split_supports = []
+      for child in temp_node.children:
+        split_supports.append(child.class_supports)
+
+      return split_supports
