@@ -159,9 +159,9 @@ attribute : String
 split_value : Float
 operator : String
 -----------------------------
-Split( attribute_type : String,
-        attribute : String,
-        split_value : Float )
+Split_Test( attribute_type : String,
+                attribute : String,
+                split_value : Float )
 is_numerical() : Boolean
 is_categorical() : Boolean
 __str__() : String
