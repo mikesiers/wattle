@@ -8,6 +8,7 @@ pruning function.
 """
 
 import copy
+import pandas as pd
 
 class Node:
   """A class for describing a decision tree node.
@@ -17,6 +18,7 @@ class Node:
     is_root (boolean): True if this node is the root. False otherwise.
     data_points (pandas.DataFrame): The data contained in this node.
     class_attribute (string): The name of the class attribute. e.g.:'Defective'
+    attribute_types (pandas.dtype): The type of each column in data_points.
     class_supports (dict<int>): The number of data points for each class value.
       This is represented as a dictionary where each key is the name of the
       class value and each dictionary value is the number of records with that
@@ -27,7 +29,6 @@ class Node:
     child_branches (List<Branch>): A list containing the branches which connect
       this node to each of its children.
     """
-
     def __init__(self, data=None, class_attribute='', build=False,
       split_func=None, split_func_args, is_root=False, parent=None,
         parent_branch=None):
@@ -61,7 +62,7 @@ class Node:
       self.parent = None
       self.children = []
       self.child_branches = []
-      class_supports = data[class_attribute].value_counts.to_dict()
+      self.class_supports = data[class_attribute].value_counts.to_dict()
 
       if not self.is_root:
         self.parent_branch = parent_branch
@@ -70,6 +71,18 @@ class Node:
 
       if build:
         self.split(split_func, split_func_args)
+
+      # Get the attribute types from the data.
+      # The following solution was partly taken from: https://goo.gl/ARws3c
+      attribute_types = []
+      columns = data.columns
+      numerical_columns = data._get_numeric_data().columns
+      categorical_indexes = list(set(columns) - set(numerical_columns))
+      for column in range(len(columns)):
+        if column in categorical_indexes:
+          self.attribute_types.append('categorical')
+        else:
+          self.attribute_types.append('numerical')
 
     def split(split_func, recursive=False, split_func_args=[]):
       """If a split can be found, the current node gets children from it.
@@ -208,3 +221,40 @@ class Node:
         return True
       else:
         return False
+
+    def get_possible_splits():
+      """Get the possible splits for this dataset. Returns them in a list.
+
+      The list that is returned contains both categorical and numerical splits.
+
+      Args: None
+
+      Returns:
+        (list<Split_Test>) : Split tests which can be used to split this node's
+          data points.
+      """
+      # Define the list which will be appended to and returned.
+      splits = []
+
+      # It's cleaner to get the attribute names early.
+      attribute_names = list(self.data_points)
+
+      # For each index in the attribute list:
+      for index in range(len(self.attribute_types)):
+        if self.attribute_types[index] == 'categorical':
+          splits.append(Split_Test('categorical', attribute_names[index]))
+        elif self.attribute_types[index] == 'numerical':
+          column = self.data_points[attribute_names[index]]
+          unique_values = column.unique()
+
+          # The following solution was taken from: https://goo.gl/8EyjgD
+          a_values = unique_values[1:] # All values but first.
+          b_values = unique_values[:-1] # All values but last.
+          split_values = [(a + b) / 2 for a, b in zip(a_values, b_values)]
+
+          for value in split_values:
+            splits.append(Split_Test('numerical', attribute_names[index],
+              value)
+
+      # Finally, return the list of splits.
+      return splits
