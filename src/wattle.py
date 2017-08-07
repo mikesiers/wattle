@@ -378,3 +378,48 @@ class Node:
           if key != label)
 
       return num_errors
+
+    def __str__():
+      """The string representation for this object.
+
+      The representation is simply the class supports in a JSON-like format.
+
+      Returns:
+        (string): This node object represented as a string.
+      """
+      # The following solution is taken from: https://goo.gl/jU6xJ4
+      supports = self.class_supports
+      return ''.join('{}{}'.format(key, val) for key, val in supports.items())
+
+    def __eq__(self, other):
+      """Node equality function.
+
+      Args:
+        self (Node): This node object.
+        other (Node): The node object to check equality for.
+
+      Returns:
+        (boolean): True if self and other are equal. False otherwise.
+      """
+      if not self.equals(other) or self.is_leaf != other.is_leaf or
+        self.is_root != other.is_root or
+        self.class_attribute != other.class_attribute or
+        self.parent != other.parent or
+        self.children != other.children or
+        self.parent_branch != other.parent_branch or
+        self.child_branches != other.child_branches:
+        return False
+      else:
+        return True
+
+    def __ne__(self, other):
+      """Node inequality function.
+
+      Args:
+        self (Node): This node object.
+        other (Node): The node object to check inequality for.
+
+      Returns:
+        (boolean): True if self and other are not equal. False otherwise.
+      """
+      return not __eq__(self, other)
