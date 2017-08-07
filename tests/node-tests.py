@@ -32,7 +32,7 @@ def cost_reduction_split(node, positive_class, cost_matrix):
 
     # Get the class support counts for each resulting child.
     temp_node = node # This temp node gets split.
-    child_support_dicts = temp_node.get_split_supports({return split})
+    child_support_dicts = temp_node.get_split_supports(lambda: split)
     child_supports = [list(x.values()) for x in child_support_dicts]
 
     # If the cost of this split is better than the current best, update the
@@ -61,20 +61,20 @@ class test_node_class(unittest.TestCase):
     # Check that a split isn't made when not expected.
     node = Node()
     node.is_leaf = True
-    node.split({return False})
+    node.split(lambda: False)
     self.assertTrue(node.is_leaf)
     
   def test_split_return(self):
     # Check that the correct value is returned from the split function.
     node = Node()
-    self.assertTrue(node.split({return True}))
+    self.assertTrue(node.split(lambda: True))
 
   def test_prune(self):
     # Check that the node is pruned when expected.
     node = Node()
     node.children = [Node(), Node()]
     node.is_leaf = False
-    node.prune({return True})
+    node.prune(lambda: True)
     self.assertTrue(node.is_leaf)
 
   def test_prune_return(self):
@@ -82,8 +82,8 @@ class test_node_class(unittest.TestCase):
     node = Node()
     node.children = [Node(), Node()]
     node.is_leaf = False
-    self.assertTrue(node.prune({return True}))
-    self.assertFalse(node.prune({return False}))
+    self.assertTrue(node.prune(lambda: True))
+    self.assertFalse(node.prune(lambda: False))
 
   def test_string(self):
     # Check that the string representation is as expected.
