@@ -291,6 +291,33 @@ class Node:
       """
       return len(self.data_points)
 
+    def num_positive(positive_class):
+      """Gets the number of positive data points in this node.
+
+      This is a trivial operation. However, it is provided so that the number
+      of negative data points and positive data points are found in the same
+      way.
+
+      Args:
+        positive_class (string): The postivie class value.
+
+      Returns:
+        (int): The number of positive records in this node.
+      """
+      return self.class_supports[positive_class]
+
+    def num_negative(positive_class):
+      """Gets the number of negative data points in this node.
+                                                                              
+      Args:
+        positive_class (string): The postivie class value.
+                                                                              
+      Returns:
+        (int): The number of negative records in this node.
+      """
+      return np.sum(value for key, value in supports.iteritems()\
+        if key != positive_class)
+
     def num_errors(cost_sensitive=False, cost_matrix={}, positive_class=''):
       """Finds the number of resubstitution errors for this node.
 
@@ -329,9 +356,8 @@ class Node:
           raise ValueError('A cost is missing from the passed cost matrix.')
 
         # Get the number of positive and negative data points.
-        num_positive = supports[positive_class]
-        num_negative = np.sum(value for key, value in supports.iteritems()\
-          if key != positive_class)
+        num_positive = self.num_positive(positive_class)
+        num_negative = self.num_negative(positive_class)
 
         # Using the number of positive and negative data points, find out
         # whether it is cheapest to label the records in this node object as
