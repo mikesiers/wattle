@@ -9,6 +9,7 @@ pruning function.
 
 import copy
 import pandas as pd
+import DataCost as dc
 
 class Node:
   """A class for describing a decision tree node.
@@ -281,3 +282,73 @@ class Node:
         split_supports.append(child.class_supports)
 
       return split_supports
+
+    def num_records():
+      """Gets the number of records in this Node object.
+
+      Returns:
+        (int): The number of records in this Node object. (len(data_points)).
+      """
+      return len(self.data_points)
+
+    def num_errors(cost_sensitive=False, cost_matrix={}, positive_class=''):
+      """Finds the number of resubstitution errors for this node.
+
+      The number of resubstitution errors is described as follows: If the data
+      points contained within this node were classified using this node, how
+      many errors would there be?
+
+      Args:
+        cost_sensitive (boolean): Whether or not to determine the label of this
+          node cost-sensitively or not. For example, if this is False, the
+          class value with the highest support is used as the label. If true,
+          the class value with the lowest total cost is used as the label. If
+          this is True, a cost matrix must also be provided.
+        cost_matrix (dict<float>): This is used if the cost_sensitive flag is
+          set to True. It is used to calculate the label with the lowest total
+          cost. It is a dictionary which includes the keys: 'TP', 'TN', 'FP',
+          and 'FN'. The values for this dictionary are the costs associated
+          with the corresponding key. For example, 'TP' : 10 means that a true
+          positive prediction has an associated cost of 10.
+        positive_class (string): The positive class value.
+
+      Returns:
+        (int): The number of resubsitution errors for this node.
+
+      Raises:
+        ValueError: If cost_matrix is missing one of the following keys: TP, TN
+          FP, FN. This will only be raised if the cost_sensitive flag is True.
+      """
+      # Get the class supports (so that the following code is cleaner)
+      supports = self.class_supports
+      label = '' # The label for that this node uses to classify records.
+      num_errors = -1 # The value that will be returned.
+
+      if cost_sensitive:
+        if any(k not in cost_matrix for k in ('TP', 'TN', 'FP', 'FN')):
+          raise ValueError('A cost is missing from the passed cost matrix.')
+
+        # Get the number of positive and negative data points.
+        num_positive = supports[positive_class]
+        num_negative = np.sum(value for key, value in supports.iteritems()\
+          if key != positive_class)
+
+        # Using the number of positive and negative data points, find out
+        # whether it is cheapest to label the records in this node object as
+        # positive or negative.
+        cost_positive = dc.cost_labelling_positive(num_positive, num_negative,
+          cost_matrix)
+        cost_negative = dc.cost_labelling_negative(num_positive, num_negative,
+          cost_matrix)
+        if cost_positive <= cost_negative:
+          num_errors = num_negative
+        else:
+          num_errors = num_positive
+        
+      else:
+        # The records are labelled as the majority class of this node.
+        label = max(supports, key=lambda key: supports[key])
+        num_errors = np.sum(value for key, value in supports.iteritems()\
+          if key != label)
+
+      return num_errors
