@@ -1,9 +1,9 @@
 import sys
 sys.path.append('../')
-from src.node import Node
+from src.wattle import Node
 import unittest
 import pandas as pd
-import DataCost as dc
+import datacost as dc
 
 def cost_reduction_split(node, positive_class, cost_matrix):
   """Finds and returns the best split based on expected cost.
@@ -91,3 +91,6 @@ class test_node_class(unittest.TestCase):
     node.class_supports = {'Y' : 35, 'N' : 11}
     expected_string = '{Y : 35, N : 11}'
     self.assertEqual(str(node), expected_string)
+
+if __name__ == '__main__':
+    unittest.main(exit=False)

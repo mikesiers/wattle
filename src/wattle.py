@@ -9,7 +9,7 @@ pruning function.
 
 import copy
 import pandas as pd
-import DataCost as dc
+import datacost as dc
 
 class Node:
   """A class for describing a decision tree node.
@@ -31,7 +31,7 @@ class Node:
       this node to each of its children.
   """
   def __init__(self, data=None, class_attribute='', build=False,
-    split_func=None, split_func_args, is_root=False, parent=None,
+    split_func=None, split_func_args=[], is_root=False, parent=None,
       parent_branch=None):
     """The Node constructor.
 
@@ -119,7 +119,7 @@ class Node:
       return False
 
     # If the test attribute is categorical:
-    if test.attribute_type = 'categorical':
+    if test.attribute_type == 'categorical':
       # The following solution to splitting based on a categorical attribute
       # was guided by the following stackoverflow answer by user
       # 'woody pride': https://goo.gl/uohhDi
@@ -149,15 +149,15 @@ class Node:
         children.append(child)
 
     # If the test attribute is numerical:
-    elif test.attribute_type = 'numerical':
+    elif test.attribute_type == 'numerical':
 
       # Get the data points for the left and right splits. Store the results
       # in a dictionary where the keys are 'left' and 'right'. These
       # represent the '<=' and '>' splits respectively.
-      split_test = {}
-      split_data = {}
+      split_tests = {}
+      data_splits = {}
       split_tests['left'] = data_points[test.attribute <= test.split_value]
-      data_splits['left'] = self.data_points[split_tests['left']
+      data_splits['left'] = self.data_points[split_tests['left']]
       split_tests['right'] = data_points[test.attribute > test.split_value]
       data_splits['right'] = self.data_points[split_tests['right']]
 
@@ -172,13 +172,13 @@ class Node:
         if recursive:
           child = Node(data=data, parent=self,
             class_attribute=class_attribute, build=True,
-            split_func=split_func, split_func=split_func_args)
+            split_func=split_func, split_func_args=split_func_args)
         else:
           child= Node(data=data, parent=self,
             class_attribute=class_attribute)
         
         # Create a branch connecting the child to the parent.
-        if split = 'left':
+        if split == 'left':
           test.operator = '<='
         else:
           test.operator = '>'
@@ -255,7 +255,7 @@ class Node:
 
         for value in split_values:
           splits.append(Split_Test('numerical', attribute_names[index],
-            value)
+            value))
 
     # Finally, return the list of splits.
     return splits
@@ -274,7 +274,7 @@ class Node:
     """
     # Create a copy of this object and split it using split_test.
     temp_node = copy.deepcopy(self)
-    temp_node.split({return split_test})
+    temp_node.split(lambda: split_test)
 
     # Add the support counts for each child to the return list.
     split_supports = []
@@ -401,12 +401,12 @@ class Node:
     Returns:
       (boolean): True if self and other are equal. False otherwise.
     """
-    if not self.equals(other) or self.is_leaf != other.is_leaf or
-      self.is_root != other.is_root or
-      self.class_attribute != other.class_attribute or
-      self.parent != other.parent or
-      self.children != other.children or
-      self.parent_branch != other.parent_branch or
+    if not self.equals(other) or self.is_leaf != other.is_leaf or\
+      self.is_root != other.is_root or\
+      self.class_attribute != other.class_attribute or\
+      self.parent != other.parent or\
+      self.children != other.children or\
+      self.parent_branch != other.parent_branch or\
       self.child_branches != other.child_branches:
       return False
     else:
