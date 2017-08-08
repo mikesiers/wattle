@@ -12,6 +12,39 @@ import pandas as pd
 import numpy as np
 import datacost as dc
 
+class Split_Test:
+  """A class for describing a decision tree split test.
+
+  Attributes:
+    attribute_type (str): Either 'numerical' or 'categorical'.
+    attribute (str): The name of the attribute to test.
+    split_value (float): The splitting point. This is only used for Split_Test
+      objects where type='numerical'. For objects where type='categorical', it
+      is equal to None.
+    operator (str): Can be '<=' or '>'. For example, if the operator is '>'
+      then the test will be 'if attribute > split_value. This value is only
+      used when attribute_type = 'numerical'.
+  """
+  def __init__(self, attribute_type=None, attribute=None, split_value=None):
+    """The Split_Test constructor.
+
+    The values of the resulting Split_Test object are set as the arguments.
+    However, the operator value is set manually outside the constructor. The
+    choice to do this was made because operator is not set until later in the
+    wattle tree building process.
+
+    Args:
+      attribute_type (str): Either 'numerical' or 'categorical'.
+      attribute (str): The name of the attribute to test.
+      split_value (float): The splitting point. This is only used for Split_Test
+        objects where type='numerical'. For objects where type='categorical', it
+        is equal to None.
+    """
+    self.attribute_type = attribute_type
+    self.attribute = attribute
+    self.split_value = split_value
+    self.operator = None
+
 class Node:
   """A class for describing a decision tree node.
 
