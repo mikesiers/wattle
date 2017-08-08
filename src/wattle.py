@@ -9,6 +9,7 @@ pruning function.
 
 import copy
 import pandas as pd
+import numpy as np
 import datacost as dc
 
 class Node:
@@ -30,9 +31,9 @@ class Node:
     child_branches (List<Branch>): A list containing the branches which connect
       this node to each of its children.
   """
-  def __init__(self, data=None, class_attribute='', build=False,
+  def __init__(self, data=None, class_attribute=None, build=False,
     split_func=None, split_func_args=[], is_root=False, parent=None,
-      parent_branch=None):
+    parent_branch=None):
     """The Node constructor.
 
     Builds a Node object based on the arguments. Will build the node and then
@@ -63,29 +64,41 @@ class Node:
     self.parent = None
     self.children = []
     self.child_branches = []
-    self.class_supports = data[class_attribute].value_counts.to_dict()
 
+    # If the class attribute and data were provided, calculate the class
+    # supports. Since the class values may be non-string types, convert them to
+    # strings.
+    if data is not None and class_attribute is not None:
+      self.class_supports = data[class_attribute].value_counts().to_dict()
+      self.class_supports = {str(k):v for k,v in self.class_supports.items()}
+    else:
+      self.class_supports = {}
+
+    # Set the parent branch if this node is not a root node.
     if not self.is_root:
       self.parent_branch = parent_branch
     else:
       self.parent_branch = None
 
+    # Split the node if the build flag was set.
     if build:
       self.split(split_func, split_func_args)
 
     # Get the attribute types from the data.
     # The following solution was partly taken from: https://goo.gl/ARws3c
-    attribute_types = []
-    columns = data.columns
-    numerical_columns = data._get_numeric_data().columns
-    categorical_indexes = list(set(columns) - set(numerical_columns))
-    for column in range(len(columns)):
-      if column in categorical_indexes:
-        self.attribute_types.append('categorical')
-      else:
-        self.attribute_types.append('numerical')
+    # Only perform this if data was provided to the constructor:
+    self.attribute_types = []
+    if data is not None:
+      columns = data.columns
+      numerical_columns = data._get_numeric_data().columns
+      categorical_indexes = list(set(columns) - set(numerical_columns))
+      for column in range(len(columns)):
+        if column in categorical_indexes:
+          self.attribute_types.append('categorical')
+        else:
+          self.attribute_types.append('numerical')
 
-  def split(split_func, recursive=False, split_func_args=[]):
+  def split(self, split_func, recursive=False, split_func_args=[]):
     """If a split can be found, the current node gets children from it.
 
     The children are also split if recursive is set to True.
@@ -196,7 +209,7 @@ class Node:
     else:
       return False
 
-  def prune(prune_func, prune_func_args):
+  def prune(self, prune_func=None, prune_func_args=[]):
     """Removes the children from this node if the prune function says so.
                                                                             
     Args:
@@ -215,7 +228,7 @@ class Node:
 
     # If the prune function returns true, prune the node and return True.
     # Otherwise, return False.
-    if prune_func(self, prune_func, *prune_func_args):
+    if prune_func(self, *prune_func_args):
       self.children = []
       self.is_leaf = True
       self.child_branches = []
@@ -223,7 +236,7 @@ class Node:
     else:
       return False
 
-  def get_possible_splits():
+  def get_possible_splits(self):
     """Get the possible splits for this dataset. Returns them in a list.
 
     The list that is returned contains both categorical and numerical splits.
@@ -260,7 +273,7 @@ class Node:
     # Finally, return the list of splits.
     return splits
 
-  def get_split_supports(split_test):
+  def get_split_supports(self, split_test):
     """Finds the supports for the children that would result from split_test.
 
     Args:
@@ -283,7 +296,7 @@ class Node:
 
     return split_supports
 
-  def num_records():
+  def num_records(self):
     """Gets the number of records in this Node object.
 
     Returns:
@@ -291,7 +304,7 @@ class Node:
     """
     return len(self.data_points)
 
-  def num_positive(positive_class):
+  def num_positive(self, positive_class):
     """Gets the number of positive data points in this node.
 
     This is a trivial operation. However, it is provided so that the number
@@ -306,7 +319,7 @@ class Node:
     """
     return self.class_supports[positive_class]
 
-  def num_negative(positive_class):
+  def num_negative(self, positive_class):
     """Gets the number of negative data points in this node.
                                                                             
     Args:
@@ -315,10 +328,12 @@ class Node:
     Returns:
       (int): The number of negative records in this node.
     """
-    return np.sum(value for key, value in supports.iteritems()\
+    supports = self.class_supports
+    return np.sum(value for key, value in supports.items()\
       if key != positive_class)
 
-  def num_errors(cost_sensitive=False, cost_matrix={}, positive_class=''):
+  def num_errors(self, cost_sensitive=False, cost_matrix={},
+    positive_class=''):
     """Finds the number of resubstitution errors for this node.
 
     The number of resubstitution errors is described as follows: If the data
@@ -379,7 +394,7 @@ class Node:
 
     return num_errors
 
-  def __str__():
+  def __str__(self):
     """The string representation for this object.
 
     The representation is simply the class supports in a JSON-like format.
@@ -389,7 +404,12 @@ class Node:
     """
     # The following solution is taken from: https://goo.gl/jU6xJ4
     supports = self.class_supports
-    return ''.join('{}{}'.format(key, val) for key, val in supports.items())
+    string = '{'
+    for value, support in supports.items():
+      string += str(value) + ' : ' + str(support) + ', '
+    string = string[:-2]
+    string += '}'
+    return(string)
 
   def __eq__(self, other):
     """Node equality function.
