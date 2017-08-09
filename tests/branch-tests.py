@@ -1,18 +1,18 @@
 import sys
 sys.path.append('../')
-from src.branch import Branch
+from src.wattle import Branch, Node, Split_Test
 import unittest
 
 class test_branch_class(unittest.TestCase):
   def test_parent(self):
     # Check that the parent is correctly assigned.
-    parent = Node(attribute_name='parent_attr')
+    parent = Node(is_root=True)
     branch = Branch(parent=parent)
     self.assertEqual(branch.parent, parent)
 
   def test_child(self):
     # Check that the child is correctly assigned.
-    child = Node(attribute_name='child_attr')
+    child = Node(is_root=True)
     branch = Branch(child=child)
     self.assertEqual(branch.child, child)
 
@@ -22,3 +22,6 @@ class test_branch_class(unittest.TestCase):
       split_value=50, operator='>')
     branch = Branch(split_test=test)
     self.assertEqual(str(branch), 'age > 50')
+
+if __name__ == '__main__':
+    unittest.main(exit=False)
