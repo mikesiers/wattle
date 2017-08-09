@@ -24,7 +24,8 @@ class Split_Test:
       then the test will be 'if attribute > split_value. This value is only
       used when attribute_type = 'numerical'.
   """
-  def __init__(self, attribute_type=None, attribute=None, split_value=None):
+  def __init__(self, attribute_type=None, attribute=None, split_value=None,
+    operator=None):
     """The Split_Test constructor.
 
     The values of the resulting Split_Test object are set as the arguments.
@@ -38,6 +39,9 @@ class Split_Test:
       split_value (float OR string): A float or string which is the splitting
         point. If attribute_type='numerical', it is a float. If it is
         'categorical' then it is a string.
+      operator (str): Can be '<=' or '>'. For example, if the operator is '>'
+        then the test will be 'if attribute > split_value. This value is only
+        used when attribute_type = 'numerical'.
     """
     self.attribute_type = attribute_type
     self.attribute = attribute
