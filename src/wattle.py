@@ -18,9 +18,8 @@ class Split_Test:
   Attributes:
     attribute_type (str): Either 'numerical' or 'categorical'.
     attribute (str): The name of the attribute to test.
-    split_value (float): The splitting point. This is only used for Split_Test
-      objects where type='numerical'. For objects where type='categorical', it
-      is equal to None.
+    split_value (float OR string): If attribute_type='numerical', it is a
+      float. If it is 'categorical' then it is a string.
     operator (str): Can be '<=' or '>'. For example, if the operator is '>'
       then the test will be 'if attribute > split_value. This value is only
       used when attribute_type = 'numerical'.
@@ -36,14 +35,68 @@ class Split_Test:
     Args:
       attribute_type (str): Either 'numerical' or 'categorical'.
       attribute (str): The name of the attribute to test.
-      split_value (float): The splitting point. This is only used for Split_Test
-        objects where type='numerical'. For objects where type='categorical', it
-        is equal to None.
+      split_value (float OR string): A float or string which is the splitting
+        point. If attribute_type='numerical', it is a float. If it is
+        'categorical' then it is a string.
     """
     self.attribute_type = attribute_type
     self.attribute = attribute
     self.split_value = split_value
     self.operator = None
+
+  def is_numerical(self):
+    """Returns whether or not the Split_Test attribute is numerical.
+
+    Returns:
+      (boolean): True if attribute_type == 'numerical'. False otherwise.
+    """
+    return(self.attribute_type == 'numerical')
+
+  def is_categorical(self):
+    """Returns whether or not the Split_Test attribute is categorical.
+                                                                         
+    Returns:
+      (boolean): True if attribute_type == 'categorical'. False otherwise.
+    """
+    return(self.attribute_type == 'categorical')
+
+  def __str__(self):
+    """The string representation for this object.
+                                                                           
+    The representation is in the form 'attribute operator split value'.
+                                                                           
+    Returns:
+      (string): This node object represented as a string.
+    """
+    return self.attribute + self.operator + str(self.split_value)
+
+  def __eq__(self, other):
+    """Split_Test equality function.
+                                                                        
+    Args:
+      other (Node): The Split_Test object to check equality for.
+                                                                        
+    Returns:
+      (boolean): True if self and other are equal. False otherwise.
+    """
+    if self.attribute_type != other.attribute_type or\
+      self.attribute != other.attribute or\
+      self.split_value != other.split_value or\
+      self.operator != other.operator:
+      return False
+    else:
+      return True
+                                                                        
+  def __ne__(self, other):
+    """Split_Test inequality function.
+                                                                        
+    Args:
+      other (Node): The Split_Test object to check inequality for.
+                                                                        
+    Returns:
+      (boolean): True if self and other are not equal. False otherwise.
+    """
+    return not __eq__(other)
 
 class Node:
   """A class for describing a decision tree node.
@@ -448,13 +501,12 @@ class Node:
     """Node equality function.
 
     Args:
-      self (Node): This node object.
       other (Node): The node object to check equality for.
 
     Returns:
       (boolean): True if self and other are equal. False otherwise.
     """
-    if not self.equals(other) or self.is_leaf != other.is_leaf or\
+    if self.is_leaf != other.is_leaf or\
       self.is_root != other.is_root or\
       self.class_attribute != other.class_attribute or\
       self.parent != other.parent or\
@@ -469,10 +521,9 @@ class Node:
     """Node inequality function.
 
     Args:
-      self (Node): This node object.
       other (Node): The node object to check inequality for.
 
     Returns:
       (boolean): True if self and other are not equal. False otherwise.
     """
-    return not __eq__(self, other)
+    return not __eq__(other)
