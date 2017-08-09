@@ -1,4 +1,5 @@
 import sys
+import copy
 import unittest
 import pandas as pd
 import datacost as dc
@@ -31,8 +32,8 @@ def cost_reduction_split(node, positive_class, cost_matrix):
   for split in node.get_possible_splits():
 
     # Get the class support counts for each resulting child.
-    temp_node = node # This temp node gets split.
-    child_support_dicts = temp_node.get_split_supports(lambda: split)
+    temp_node = copy.deepcopy(node) # This temp node gets split.
+    child_support_dicts = temp_node.get_split_supports(split)
     child_supports = [list(x.values()) for x in child_support_dicts]
 
     # If the cost of this split is better than the current best, update the

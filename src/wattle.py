@@ -262,10 +262,14 @@ class Node:
       # represent the '<=' and '>' splits respectively.
       split_tests = {}
       data_splits = {}
-      split_tests['left'] = data_points[test.attribute <= test.split_value]
-      data_splits['left'] = self.data_points[split_tests['left']]
-      split_tests['right'] = data_points[test.attribute > test.split_value]
-      data_splits['right'] = self.data_points[split_tests['right']]
+
+       # Create an alias variable to make the following code cleaner.
+      data_points = self.data_points
+
+      split_tests['left'] = data_points[test.attribute] <= test.split_value
+      data_splits['left'] = data_points[split_tests['left']]
+      split_tests['right'] = data_points[test.attribute] > test.split_value
+      data_splits['right'] = data_points[split_tests['right']]
 
       # Create the left and right children. If the recursive flag is set,
       # create children which also split.
@@ -380,7 +384,7 @@ class Node:
     """
     # Create a copy of this object and split it using split_test.
     temp_node = copy.deepcopy(self)
-    temp_node.split(lambda: split_test)
+    temp_node.split(lambda _: split_test)
 
     # Add the support counts for each child to the return list.
     split_supports = []
