@@ -22,10 +22,10 @@ class test_split_test_class(unittest.TestCase):
     # Check that the string representation is as expected.
     test = Split_Test(attribute='age', attribute_type='numerical',
       split_value=55.0, operator='>')
-    assertEqual(test, 'age > 55.0')
+    self.assertEqual(str(test), 'age > 55.0')
     test = Split_Test(attribute='colour', attribute_type='categorical',
       split_value='red')
-    assertEqual(test, 'colour = red')
+    self.assertEqual(str(test), 'colour = red')
 
 if __name__ == '__main__':
     unittest.main(exit=False)

@@ -72,7 +72,10 @@ class Split_Test:
     Returns:
       (string): This node object represented as a string.
     """
-    return self.attribute + self.operator + str(self.split_value)
+    if self.attribute_type == 'numerical':
+      return self.attribute + ' ' + self.operator + ' ' + str(self.split_value)
+    else:
+      return self.attribute + ' = ' + str(self.split_value)
 
   def __eq__(self, other):
     """Split_Test equality function.
