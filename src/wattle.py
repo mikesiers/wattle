@@ -430,11 +430,15 @@ class Node:
     # Finally, return the list of splits.
     return splits
 
-  def get_split_supports(self, split_test):
+  def get_split_supports(self, split_test, posneg=False, positive_class=None):
     """Finds the supports for the children that would result from split_test.
 
     Args:
       split_test (Split_Test): Used to split the data.
+      posneg (Boolean): Whether to return the supports in two categories -
+        positive and negative. Where positive data points have the positive
+        class value and negative records don't.
+      positive_class (str): The name of the positive class value.
 
     Returns:
       (List<Dict>): The i'th element in the list is the i'th class supports,
@@ -449,7 +453,13 @@ class Node:
     # Add the support counts for each child to the return list.
     split_supports = []
     for child in temp_node.children:
-      split_supports.append(child.class_supports)
+      if posneg:
+        split_supports.append(child.class_supports)
+      else:
+        supports = {}
+        supports['positive'] = child.num_positive(positive_class)
+        supports['negative'] = child.num_negative(positive_class)
+        split_supports.append(supports)
 
     return split_supports
 

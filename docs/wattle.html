@@ -185,10 +185,14 @@ Returns:<br>
 &nbsp;&nbsp;(list&lt;<a href="#Split_Test">Split_Test</a>&gt;)&nbsp;:&nbsp;Split&nbsp;tests&nbsp;which&nbsp;can&nbsp;be&nbsp;used&nbsp;to&nbsp;split&nbsp;this&nbsp;node's<br>
 &nbsp;&nbsp;&nbsp;&nbsp;data&nbsp;points.</tt></dd></dl>
 
-<dl><dt><a name="Node-get_split_supports"><strong>get_split_supports</strong></a>(self, split_test)</dt><dd><tt>Finds&nbsp;the&nbsp;supports&nbsp;for&nbsp;the&nbsp;children&nbsp;that&nbsp;would&nbsp;result&nbsp;from&nbsp;split_test.<br>
+<dl><dt><a name="Node-get_split_supports"><strong>get_split_supports</strong></a>(self, split_test, posneg=False, positive_class=None)</dt><dd><tt>Finds&nbsp;the&nbsp;supports&nbsp;for&nbsp;the&nbsp;children&nbsp;that&nbsp;would&nbsp;result&nbsp;from&nbsp;split_test.<br>
 &nbsp;<br>
 Args:<br>
 &nbsp;&nbsp;split_test&nbsp;(<a href="#Split_Test">Split_Test</a>):&nbsp;Used&nbsp;to&nbsp;split&nbsp;the&nbsp;data.<br>
+&nbsp;&nbsp;posneg&nbsp;(Boolean):&nbsp;Whether&nbsp;to&nbsp;return&nbsp;the&nbsp;supports&nbsp;in&nbsp;two&nbsp;categories&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;positive&nbsp;and&nbsp;negative.&nbsp;Where&nbsp;positive&nbsp;data&nbsp;points&nbsp;have&nbsp;the&nbsp;positive<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;value&nbsp;and&nbsp;negative&nbsp;records&nbsp;don't.<br>
+&nbsp;&nbsp;positive_class&nbsp;(str):&nbsp;The&nbsp;name&nbsp;of&nbsp;the&nbsp;positive&nbsp;class&nbsp;value.<br>
 &nbsp;<br>
 Returns:<br>
 &nbsp;&nbsp;(List&lt;Dict&gt;):&nbsp;The&nbsp;i'th&nbsp;element&nbsp;in&nbsp;the&nbsp;list&nbsp;is&nbsp;the&nbsp;i'th&nbsp;class&nbsp;supports,<br>
