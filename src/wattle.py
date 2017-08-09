@@ -46,7 +46,7 @@ class Split_Test:
     self.attribute_type = attribute_type
     self.attribute = attribute
     self.split_value = split_value
-    self.operator = None
+    self.operator = operator
 
   def is_numerical(self):
     """Returns whether or not the Split_Test attribute is numerical.
