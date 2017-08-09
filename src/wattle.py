@@ -70,7 +70,7 @@ class Split_Test:
     The representation is in the form 'attribute operator split value'.
                                                                            
     Returns:
-      (string): This node object represented as a string.
+      (string): This Split_Test object represented as a string.
     """
     if self.attribute_type == 'numerical':
       return self.attribute + ' ' + self.operator + ' ' + str(self.split_value)
@@ -81,7 +81,7 @@ class Split_Test:
     """Split_Test equality function.
                                                                         
     Args:
-      other (Node): The Split_Test object to check equality for.
+      other (Split_Test): The Split_Test object to check equality for.
                                                                         
     Returns:
       (boolean): True if self and other are equal. False otherwise.
@@ -98,7 +98,67 @@ class Split_Test:
     """Split_Test inequality function.
                                                                         
     Args:
-      other (Node): The Split_Test object to check inequality for.
+      other (Split_Test): The Split_Test object to check inequality for.
+                                                                        
+    Returns:
+      (boolean): True if self and other are not equal. False otherwise.
+    """
+    return not __eq__(other)
+
+class Branch:
+  """A class for describing a decision tree branch.
+
+  Attributes:
+    parent (Node): The parent node of this branch.
+    child (Node): The child node of this branch.
+    split_test (Split_Test): The test associated with this decision tree
+      branch. For example: 'age <= 50'.
+  """
+  def __init__(self, parent=None, child=None, split_test=None):
+    """The Branch constructor.
+
+    Args:
+      parent (Node): The parent node of this branch.
+      child (Node): The child node of this branch.
+      split_test (Split_Test): The test associated with this decision tree
+        branch. For example: 'age <= 50'.
+    """
+    self.parent = parent
+    self.child = child
+    self.split_test = split_test
+
+  def __str__(self):
+    """The string representation for this object.
+                                                                           
+    The representation is in the form 'attribute operator split value'. It
+    produces the same output as the string representation of the split test.
+                                                                           
+    Returns:
+      (string): This object represented as a string.
+    """
+    return str(self.split_test)
+
+  def __eq__(self, other):
+    """Split_Test equality function.
+                                                                        
+    Args:
+      other (Branch): The Branch object to check equality for.
+                                                                        
+    Returns:
+      (boolean): True if self and other are equal. False otherwise.
+    """
+    if self.parent != other.parent or\
+      self.child != other.child or\
+      self.split_test != other.split_test:
+      return False
+    else:
+      return True
+                                                                        
+  def __ne__(self, other):
+    """Split_Test inequality function.
+                                                                        
+    Args:
+      other (Branch): The Branch object to check inequality for.
                                                                         
     Returns:
       (boolean): True if self and other are not equal. False otherwise.
