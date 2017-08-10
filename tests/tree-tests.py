@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../')
-from src.tree import Tree
+#from src.wattle import Tree
 import unittest
 
 class test_tree_class(unittest.TestCase):
@@ -21,3 +21,6 @@ class test_tree_class(unittest.TestCase):
   def test_string(self):
     # Check that the string representation is as expected.
     pass
+
+if __name__ == '__main__':
+    unittest.main(exit=False)

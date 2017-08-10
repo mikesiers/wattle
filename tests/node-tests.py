@@ -32,9 +32,8 @@ def cost_reduction_split(node, positive_class, cost_matrix):
   for split in node.get_possible_splits():
 
     # Get the class support counts for each resulting child.
-    temp_node = copy.deepcopy(node) # This temp node gets split.
-    child_support_dicts = temp_node.get_split_supports(split)
-    child_supports = [list(x.values()) for x in child_support_dicts]
+    child_supports = node.get_split_supports(split, posneg=True,
+      positive_class=positive_class)
 
     # If the cost of this split is better than the current best, update the
     # current best split to be this split.
@@ -54,21 +53,25 @@ class test_node_class(unittest.TestCase):
     data = pd.read_csv('data/LOC_SDP.csv')
     node = Node(data, class_attribute='Defective')
     cost_matrix = {'TP' : 1, 'TN' : 0, 'FP' : 1, 'FN' : 5}
-    node.split(cost_reduction_split(node, '1', cost_matrix))
-    for branch in child_branch:
+    node.split(cost_reduction_split, split_func_args=['1', cost_matrix])
+    for branch in node.child_branches:
       assertEqual(branch.Split_Test.split_value, 73.5)
 
   def test_split_not_made(self):
     # Check that a split isn't made when not expected.
     node = Node()
     node.is_leaf = True
-    node.split(lambda _: False)
+    node.split(lambda _: None)
     self.assertTrue(node.is_leaf)
     
   def test_split_return(self):
     # Check that the correct value is returned from the split function.
-    node = Node()
-    self.assertTrue(node.split(lambda _: True))
+    data = pd.read_csv('data/LOC_SDP.csv')
+    node = Node(data, class_attribute='Defective')
+    cost_matrix = {'TP' : 1, 'TN' : 0, 'FP' : 1, 'FN' : 5}
+    split_func_args = ['1', cost_matrix]
+    self.assertTrue(node.split(cost_reduction_split,
+      split_func_args=split_func_args))
 
   def test_prune(self):
     # Check that the node is pruned when expected.

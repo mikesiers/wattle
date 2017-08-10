@@ -356,6 +356,13 @@ class Node:
         child.parent_branch = parent_branch
         children.append(child)
 
+    # Make sure that the class support counts for each resulting child has
+    # a count for each class value of the parent even when it's zero.
+    for child in children:
+      for value in self.class_supports:
+        if value not in child.class_supports:
+          child.class_supports[value] = 0
+
     # If a split was performed, return True and set the children of this Node
     # to be the child nodes that were created. This Node object is also no
     # longer a leaf. If a split wasn't performed, return False.
@@ -454,12 +461,12 @@ class Node:
     split_supports = []
     for child in temp_node.children:
       if posneg:
-        split_supports.append(child.class_supports)
-      else:
         supports = {}
         supports['positive'] = child.num_positive(positive_class)
         supports['negative'] = child.num_negative(positive_class)
         split_supports.append(supports)
+      else:
+        split_supports.append(child.class_supports)
 
     return split_supports
 
