@@ -39,7 +39,7 @@ build( data : pandas.DataFrame,
           prune_func_args : List ) : Void
 prune( prune_func : Function,
            prune_func_args : List ) : Boolean
-classify( records : pandas.DataFrame,
+classify( data_points : pandas.DataFrame,
             cost_sensitive : Boolean,
             cost_matrix : Dict&lt;Number&gt; )
   : List&lt;String&gt;
