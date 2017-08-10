@@ -17,15 +17,16 @@
     <node id="n0">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="486.71860704538244" width="277.0" x="379.5" y="-234.52597018935785"/>
+          <y:Geometry height="502.71860704538244" width="277.0" x="379.5" y="-244.19263685602448"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.869140625" x="123.5654296875" y="4.0">Tree</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="456.25" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="274.791015625" x="2.0" y="30.1328125">root : Node
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="470.3828125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="274.791015625" x="2.0" y="30.1328125">root : Node
 num_nodes : Integer
 ---------------------------------------
 Tree( data : pandas.DataFrame,
          class_attribute : String,
+         positive_class : String,
          build : Boolean,
          split_func : Function,
          split_func_args : List,
@@ -100,7 +101,7 @@ __ ne__( self : Node,
     <node id="n2">
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="601.3333333333335" width="290.0" x="35.5" y="-291.83333333333337"/>
+          <y:Geometry height="604.6666666666667" width="290.0" x="35.5" y="-295.16666666666663"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
           <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="127.7626953125" y="4.0">Node</y:NodeLabel>
@@ -108,6 +109,7 @@ __ ne__( self : Node,
 is_root : Boolean
 data_points : pandas.DataFrame
 class_attribute : String
+positive_class : String
 attribute_types : List
 class_supports : Dict
 parent : Node
@@ -117,6 +119,7 @@ child_branches : List&lt;Branch&gt;
 -----------------------------------------
 Node( data : pandas.DataFrame,
           class_attribute : String,
+          positive_class : String,
           build : Boolean,
           split_func : Function,
           split_func_args : List
@@ -130,15 +133,13 @@ prune( prune_func : Function,
            prune_func_args ) : Boolean
 get_possible_splits() : List&lt;Split_Test&gt;
 get_split_supports( split_test : Split_Test,
-                            posneg : Boolean,
-                            positive_class : String )
+                            posneg : Boolean )
   : List&lt;Dict&gt;
 num_records() : Number
 num_errors( cost_sensitive : Boolean,
-                   cost_matrix : Dict,
-                   positive_class : String ) : Number
-num_positive( positive_class : String ) : Number
-num_negative( positive_class : String ) : Number
+                   cost_matrix : Dict ) : Number
+num_positive() : Number
+num_negative() : Number
 __str__() : String
 __eq__( self : Node,
             other : Node ) : Boolean
