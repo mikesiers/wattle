@@ -18,10 +18,9 @@ def cost_reduction_split(node, positive_class, cost_matrix):
     (wattle.Split_Test): The best split based on expected cost.
 
   """
-
   # Calculate the expected cost of the parent.
-  num_positive = node.num_positive(positive_class)
-  num_negative = node.num_negative(positive_class)
+  num_positive = node.num_positive()
+  num_negative = node.num_negative()
   parent_cost = dc.expected_cost(num_positive, num_negative, cost_matrix)
 
   # These values will get updated if a better split is found.
@@ -32,8 +31,7 @@ def cost_reduction_split(node, positive_class, cost_matrix):
   for split in node.get_possible_splits():
 
     # Get the class support counts for each resulting child.
-    child_supports = node.get_split_supports(split, posneg=True,
-      positive_class=positive_class)
+    child_supports = node.get_split_supports(split, posneg=True)
 
     # If the cost of this split is better than the current best, update the
     # current best split to be this split.
@@ -48,14 +46,15 @@ def cost_reduction_split(node, positive_class, cost_matrix):
     return None
 
 class test_node_class(unittest.TestCase):
+
   def test_split_made(self):
     # Check that a split is made as and when expected.
     data = pd.read_csv('data/LOC_SDP.csv')
-    node = Node(data, class_attribute='Defective')
+    node = Node(data, class_attribute='Defective', positive_class='1')
     cost_matrix = {'TP' : 1, 'TN' : 0, 'FP' : 1, 'FN' : 5}
     node.split(cost_reduction_split, split_func_args=['1', cost_matrix])
     for branch in node.child_branches:
-      assertEqual(branch.Split_Test.split_value, 73.5)
+      self.assertEqual(branch.split_test.split_value, 73.5)
 
   def test_split_not_made(self):
     # Check that a split isn't made when not expected.
@@ -67,7 +66,7 @@ class test_node_class(unittest.TestCase):
   def test_split_return(self):
     # Check that the correct value is returned from the split function.
     data = pd.read_csv('data/LOC_SDP.csv')
-    node = Node(data, class_attribute='Defective')
+    node = Node(data, class_attribute='Defective', positive_class='1')
     cost_matrix = {'TP' : 1, 'TN' : 0, 'FP' : 1, 'FN' : 5}
     split_func_args = ['1', cost_matrix]
     self.assertTrue(node.split(cost_reduction_split,
@@ -93,7 +92,7 @@ class test_node_class(unittest.TestCase):
     # Check that the string representation is as expected.
     node = Node()
     node.class_supports = {'Y' : 35, 'N' : 11}
-    expected_string = '{Y : 35, N : 11}'
+    expected_string = '{N : 11, Y : 35}'
     self.assertEqual(str(node), expected_string)
 
 if __name__ == '__main__':

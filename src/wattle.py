@@ -8,6 +8,7 @@ pruning function.
 """
 
 import copy
+import collections
 import pandas as pd
 import numpy as np
 import datacost as dc
@@ -63,6 +64,24 @@ class Split_Test:
       (boolean): True if attribute_type == 'categorical'. False otherwise.
     """
     return(self.attribute_type == 'categorical')
+
+  def test_data_point(self, data_point):
+    """Tests if the data point passes this test.
+
+    Args:
+      data_point (pandas.DataFrame): Contains a single row which represents the
+        data point to test for.
+
+    Returns:
+      (boolean): True if the data point passes, False otherwise.
+    """
+    if self.attribute_type == 'numerical':
+      if operator == '<=':
+        return(data_point[self.attribute] <= self.split_value)
+      elif operator == '>':
+        return(data_point[self.attribute] > self.split_value)
+    elif self.attribute_type == 'categorical':
+      return(data_point[self.attribute] == self.split_value)
 
   def __str__(self):
     """The string representation for this object.
@@ -173,6 +192,7 @@ class Node:
     is_root (boolean): True if this node is the root. False otherwise.
     data_points (pandas.DataFrame): The data contained in this node.
     class_attribute (string): The name of the class attribute. e.g.:'Defective'
+    positive_class (string): The positive class value.
     attribute_types (pandas.dtype): The type of each column in data_points.
     class_supports (dict<int>): The number of data points for each class value.
       This is represented as a dictionary where each key is the name of the
@@ -184,19 +204,18 @@ class Node:
     child_branches (List<Branch>): A list containing the branches which connect
       this node to each of its children.
   """
-  def __init__(self, data=None, class_attribute=None, build=False,
-    split_func=None, split_func_args=[], is_root=False, parent=None,
-    parent_branch=None):
+  def __init__(self, data=None, class_attribute=None, positive_class=None,
+    build=False, split_func=None, split_func_args=[], is_root=False,
+    parent=None, parent_branch=None):
     """The Node constructor.
 
-    Builds a Node object based on the arguments. Will build the node and then
-    prune it if both build and prune are True. If prune is True but build is
-    false, then no pruning will occur. Building and pruning are performed
-    using the split_func and prune_func functions.
+    Builds a Node object based on the arguments. Build is performed using the
+    passed split function.
 
     Args:
       data (pandas.DataFrame): The data contained within this node.
       class_attribute (string): The name of the class attribute.
+      positive_class (string): The positive class value.
       build (boolean): Whether or not to build the node as part of the object
         construction process. This can be done manually later using the build
         function if desired.
@@ -212,11 +231,26 @@ class Node:
     """
     self.data_points = data
     self.class_attribute = class_attribute
+    self.positive_class = positive_class
     self.is_leaf = True
-    self.is_root = False
+    self.is_root = is_root
     self.parent = None
     self.children = []
     self.child_branches = []
+
+    # Get the attribute types from the data.
+    # The following solution was partly taken from: https://goo.gl/ARws3c
+    # Only perform this if data was provided to the constructor:
+    self.attribute_types = []
+    if data is not None:
+      columns = data.columns
+      numerical_columns = data._get_numeric_data().columns
+      categorical_indexes = list(set(columns) - set(numerical_columns))
+      for column in range(len(columns)):
+        if column in categorical_indexes:
+          self.attribute_types.append('categorical')
+        else:
+          self.attribute_types.append('numerical')
 
     # If the class attribute and data were provided, calculate the class
     # supports. Since the class values may be non-string types, convert them to
@@ -235,21 +269,7 @@ class Node:
 
     # Split the node if the build flag was set.
     if build:
-      self.split(split_func, split_func_args)
-
-    # Get the attribute types from the data.
-    # The following solution was partly taken from: https://goo.gl/ARws3c
-    # Only perform this if data was provided to the constructor:
-    self.attribute_types = []
-    if data is not None:
-      columns = data.columns
-      numerical_columns = data._get_numeric_data().columns
-      categorical_indexes = list(set(columns) - set(numerical_columns))
-      for column in range(len(columns)):
-        if column in categorical_indexes:
-          self.attribute_types.append('categorical')
-        else:
-          self.attribute_types.append('numerical')
+      self.split(split_func=split_func, split_func_args=split_func_args)
 
   def split(self, split_func, recursive=False, split_func_args=[]):
     """If a split can be found, the current node gets children from it.
@@ -276,9 +296,11 @@ class Node:
       raise ValueError('Cannot split a node which is not a leaf.')
 
     # Find the best split based on the split function and create an empty
-    # list of children which will be populated based on the split.
+    # list of children which will be populated based on the split. Also create
+    # a child branches list which has a similar purpose.
     test = split_func(self, *split_func_args)
     children = []
+    child_branches = []
       
     # If there was no suitable test found:
     if test is None:
@@ -303,16 +325,19 @@ class Node:
         child = None # Created below in the if-else block.
         if recursive:
           child = Node(data=data, parent=self,
-            class_attribute=class_attribute, build=True,
+            class_attribute=self.class_attribute,
+            positive_class=self.positive_class, build=True,
             split_func=split_func, split_func_args=split_func_args)
         else:
           child = Node(data=data, parent=self,
-            class_attribute=class_attribute)
+            class_attribute=self.class_attribute,
+            positive_class=self.positive_class)
 
         # Create a branch connecting the child to the parent.
         parent_branch = Branch(self, child, test)
         child.parent_branch = parent_branch
         children.append(child)
+        child_branches.append(copy.deepcopy(parent_branch))
 
     # If the test attribute is numerical:
     elif test.attribute_type == 'numerical':
@@ -341,11 +366,12 @@ class Node:
         child = None # Created below in the if-else block.
         if recursive:
           child = Node(data=data, parent=self,
-            class_attribute=class_attribute, build=True,
+            class_attribute=class_attribute,
+            positive_class=self.positive_class, build=True,
             split_func=split_func, split_func_args=split_func_args)
         else:
-          child= Node(data=data, parent=self,
-            class_attribute=class_attribute)
+          child = Node(data=data, parent=self, class_attribute=class_attribute,
+            positive_class=self.positive_class)
         
         # Create a branch connecting the child to the parent.
         if split == 'left':
@@ -355,6 +381,7 @@ class Node:
         parent_branch = Branch(self, child, test)
         child.parent_branch = parent_branch
         children.append(child)
+        child_branches.append(copy.deepcopy(parent_branch))
 
     # Make sure that the class support counts for each resulting child has
     # a count for each class value of the parent even when it's zero.
@@ -362,11 +389,16 @@ class Node:
       for value in self.class_supports:
         if value not in child.class_supports:
           child.class_supports[value] = 0
+    for branch in child_branches:
+      for value in self.class_supports:
+        if value not in branch.child.class_supports:
+          branch.child.class_supports[value] = 0
 
     # If a split was performed, return True and set the children of this Node
     # to be the child nodes that were created. This Node object is also no
     # longer a leaf. If a split wasn't performed, return False.
     if children:
+      self.child_branches = child_branches
       self.children = children
       self.is_leaf = False
       return True
@@ -419,11 +451,14 @@ class Node:
 
     # For each index in the attribute list:
     for index in range(len(self.attribute_types)):
+      if attribute_names[index] == self.class_attribute:
+        continue
       if self.attribute_types[index] == 'categorical':
         splits.append(Split_Test('categorical', attribute_names[index]))
       elif self.attribute_types[index] == 'numerical':
         column = self.data_points[attribute_names[index]]
         unique_values = column.unique()
+        unique_values.sort()
 
         # The following solution was taken from: https://goo.gl/8EyjgD
         a_values = unique_values[1:] # All values but first.
@@ -437,7 +472,7 @@ class Node:
     # Finally, return the list of splits.
     return splits
 
-  def get_split_supports(self, split_test, posneg=False, positive_class=None):
+  def get_split_supports(self, split_test, posneg=False):
     """Finds the supports for the children that would result from split_test.
 
     Args:
@@ -445,7 +480,6 @@ class Node:
       posneg (Boolean): Whether to return the supports in two categories -
         positive and negative. Where positive data points have the positive
         class value and negative records don't.
-      positive_class (str): The name of the positive class value.
 
     Returns:
       (List<Dict>): The i'th element in the list is the i'th class supports,
@@ -462,8 +496,8 @@ class Node:
     for child in temp_node.children:
       if posneg:
         supports = {}
-        supports['positive'] = child.num_positive(positive_class)
-        supports['negative'] = child.num_negative(positive_class)
+        supports['positive'] = child.num_positive()
+        supports['negative'] = child.num_negative()
         split_supports.append(supports)
       else:
         split_supports.append(child.class_supports)
@@ -478,36 +512,29 @@ class Node:
     """
     return len(self.data_points)
 
-  def num_positive(self, positive_class):
+  def num_positive(self):
     """Gets the number of positive data points in this node.
 
     This is a trivial operation. However, it is provided so that the number
     of negative data points and positive data points are found in the same
     way.
 
-    Args:
-      positive_class (string): The postivie class value.
-
     Returns:
       (int): The number of positive records in this node.
     """
-    return self.class_supports[positive_class]
+    return self.class_supports[self.positive_class]
 
-  def num_negative(self, positive_class):
+  def num_negative(self):
     """Gets the number of negative data points in this node.
                                                                             
-    Args:
-      positive_class (string): The postivie class value.
-                                                                              
     Returns:
       (int): The number of negative records in this node.
     """
     supports = self.class_supports
     return np.sum(value for key, value in supports.items()\
-      if key != positive_class)
+      if key != self.positive_class)
 
-  def num_errors(self, cost_sensitive=False, cost_matrix={},
-    positive_class=''):
+  def num_errors(self, cost_sensitive=False, cost_matrix={}):
     """Finds the number of resubstitution errors for this node.
 
     The number of resubstitution errors is described as follows: If the data
@@ -526,7 +553,6 @@ class Node:
         and 'FN'. The values for this dictionary are the costs associated
         with the corresponding key. For example, 'TP' : 10 means that a true
         positive prediction has an associated cost of 10.
-      positive_class (string): The positive class value.
 
     Returns:
       (int): The number of resubsitution errors for this node.
@@ -545,8 +571,8 @@ class Node:
         raise ValueError('A cost is missing from the passed cost matrix.')
 
       # Get the number of positive and negative data points.
-      num_positive = self.num_positive(positive_class)
-      num_negative = self.num_negative(positive_class)
+      num_positive = self.num_positive()
+      num_negative = self.num_negative()
 
       # Using the number of positive and negative data points, find out
       # whether it is cheapest to label the records in this node object as
@@ -577,7 +603,10 @@ class Node:
       (string): This node object represented as a string.
     """
     # The following solution is taken from: https://goo.gl/jU6xJ4
+    # Additionally the supports are converted to an ordereddict. This means
+    # that they are always output in the same order.
     supports = self.class_supports
+    supports = collections.OrderedDict(sorted(supports.items()))
     string = '{'
     for value, support in supports.items():
       string += str(value) + ' : ' + str(support) + ', '
@@ -615,3 +644,202 @@ class Node:
       (boolean): True if self and other are not equal. False otherwise.
     """
     return not __eq__(other)
+
+class Tree:
+  """A class for describing a decision tree. The class is a classifier.
+                                                                             
+  Attributes:
+    root (Node): The root node of this decision tree.
+    num_nodes (Number): The number of nodes that are in this decision tree.
+  """
+  def __init__(self, data=None, class_attribute=None, positive_class=None,
+    build=False, split_func=None, split_func_args=[], prune=False,
+    prune_func_args=[]):
+    """The Tree constructor.
+                                                                              
+    Builds a Tree object based on the arguments. Will build the tree and then
+    prune it if both build and prune are True. If prune is True but build is
+    false, then no pruning will occur. Building and pruning are performed
+    using the split_func and prune_func functions.
+                                                                              
+    Args:
+      data (pandas.DataFrame): The data contained within this node.
+      class_attribute (string): The name of the class attribute.
+      positive_class (string): The positive class value.
+      build (boolean): Whether or not to build the node as part of the object
+        construction process. This can be done manually later using the build
+        function if desired.
+      split_func (function): A function which takes a node as input and
+        returns a Split_Test object which describes the best split for this
+        node. The function should return None if there were no good splits
+        found.
+      split_func_args (list): A list of arguments to pass to the split
+        function. They are passed in the same order as this list.
+      prune (function): A function which takes a node as input and returns True
+        if the node should be pruned, and False otherwise.
+      prune_func_args (list): A list of arguments to pass to the prune function.
+        They are passed in the same order as this list.
+    """
+    if build:
+      self.root = Node(data=data, class_attribute=class_attribute,
+        positive_class=positive_class, is_root=True, build=True,
+        split_func=split_func, split_func_args=split_func_args)
+    else:
+      self.root = Node(data=data, class_attribute=class_attribute,
+        positive_class=positive_class, is_root=True)
+
+    if prune:
+      keep_pruning = True
+      while keep_pruning:
+        leaves = self.get_leaves()
+
+        # If the number of leaves is one, it is the root node, and cannot be
+        # pruned.
+        if len(leaves) == 1:
+          break
+        prunable_nodes = set()
+        for leaf in leaves:
+          if all(sibling.is_leaf for sibling in leaf.parent.children):
+            prunable_nodes.add(leaf.parent)
+        if all(node.prune(prune_func, prune_func_args)==False for\
+          node in prunable_nodes):
+          keep_pruning = False
+
+    # Count the number of nodes in the tree.
+    self.num_nodes = self.calculate_num_nodes()
+
+  def calculate_num_nodes(self):
+    """Counts the number of nodes in this tree.
+
+    Returns:
+      (Number): The number of nodes in this tree.
+    """
+    # Inner function which recursively adds a node's children to the node
+    # count.
+    def add_children_counts(node, count=1):
+      if not node.is_leaf:
+        count += len(node.children)
+        for child in node.children:
+          add_children_counts(child, count)
+      if node.is_root:
+        return count
+    return add_children_counts(self.root)
+
+  def get_leaves(self):
+    """Gets all the leaves in this tree.
+
+    Returns:
+      (List<Node>): A list of all the leaves in this tree.
+    """
+    leaves = []
+
+    # Inner function which recursively adds a node's children to leaves if they
+    # are leaves.
+    def recursive_add_if_leaf(node):
+      if node.is_leaf:
+        leaves.append(node)
+      else:
+        for child in node.children:
+          recursive_add_if_leaf(child)
+
+    add_leaves(self.root)
+    return leaves
+
+  def prune(self, prune_func, prune_func_args):
+    """Prunes the tree.
+
+    Args:
+      prune_func (function): A function which takes a node as input and returns
+        True if it should be pruned and False otherwise.
+      prune_func_args (list): A list of arguments to provide to the pruning
+        function.
+
+    Returns:
+      (boolean): True if pruning occurred. False otherwise.
+    """
+    keep_pruning = True
+    while keep_pruning:
+      leaves = self.get_leaves()
+                                                                           
+      # If the number of leaves is one, it is the root node, and cannot be
+      # pruned.
+      if len(leaves) == 1:
+        return False
+
+      prunable_nodes = set()
+      for leaf in leaves:
+        if all(sibling.is_leaf for sibling in leaf.parent.children):
+          prunable_nodes.add(leaf.parent)
+      if all(node.prune(prune_func, prune_func_args)==False for\
+        node in prunable_nodes):
+        keep_pruning = False
+
+    # If this point is reached, pruning must have occurred.
+    return True
+
+  def classify(self, data_points, cost_sensitive=False, cost_matrix={}):
+    """Classifies the passed data points.
+
+    Args:
+      data_points (pandas.DataFrame): The data points to classify.
+      cost_sensitive (boolean): Whether to classify cost-sensitively.
+      cost_matrix (Dict<float>): The costs to use when classifying
+        cost-sensitively.
+
+    Returns:
+      (list<str>): A list where the i'th value is the class value (as a string)
+        which is the classification for the i'th data point in data_points.
+    """
+    class_attribute = self.root.class_attribute
+    classifications = []
+
+    # Recursive inner function for finding the leaf which a data point belongs
+    # in.
+    def find_matching_leaf(data_point, node):
+      if node.is_leaf:
+        return node
+      else:
+        for branch in node.child_branches:
+          test = branch.split_test
+          if test.test_data_point(data_point):
+            return find_matching_leaf(data_point, branch.child)
+
+    # Classify each data point.
+    for data_point_index in range(len(data_points)):
+      data_point = data_points.iloc[data_point_index]
+      matching_leaf = find_matching_leaf(data_point, self.root)
+      supports = matching_leaf.class_supports
+      
+      # Perform the classification cost-sensitively if the cost-sensitive
+      # parameter is True.
+      if cost_sensitive:
+        positive_cost = dc.cost_labelling_positive(self.num_positive(),
+          self.num_negative(), cost_matrix)
+        negative_cost = dc.cost_labelling_negative(self.num_positive(),
+          self.num_negative(), cost_matrix)
+        if positive_cost <= negative_cost:
+          return 'positive'
+        else:
+          return 'negative'
+      else:
+        classifications.append(max(supports, key=supports.get))
+
+  def __str__(self):
+    """The string representation of the Tree object.
+
+    Returns:
+      (str): The string representation of the Tree object.
+    """
+
+    # A recursive function which builds the string from the Tree.
+    def build_string(node, string='', indent=0):
+      for branch in node.child_branches:
+        string += str(branch)
+        if branch.child.is_leaf:
+          string += ' : ' + str(branch.child) + '\n'
+        else:
+          build_string(node=branch.child, string=string, indent=indent+2)
+      if node.is_root:
+        return string
+
+    return build_string(self.root)
