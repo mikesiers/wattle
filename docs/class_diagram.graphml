@@ -15,23 +15,39 @@
   <graph edgedefault="directed" id="G">
     <data key="d0"/>
     <node id="n0">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="186.0" width="220.0" x="372.0" y="115.5"/>
+          <y:Geometry height="420.71860704538244" width="277.0" x="379.5" y="-203.19263685602448"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.869140625" x="95.0654296875" y="4.0">Tree</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="145.328125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="219.244140625" x="2.0" y="30.1328125">root : Node
+          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="29.869140625" x="123.5654296875" y="4.0">Tree</y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="385.5859375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="274.791015625" x="2.0" y="30.1328125">root : Node
 num_nodes : Integer
--------------------------------
+---------------------------------------
+Tree( data : pandas.DataFrame,
+         class_attribute : String,
+         positive_class : String,
+         build : Boolean,
+         split_func : Function,
+         split_func_args : List,
+         prune : Boolean,
+         prune_func : Function,
+         prune_func_args : List )
 build( data : pandas.DataFrame,
+          split_func : Function,
+          split_func_args : List,
           prune : Boolean,
-          options : Dict ) : Void
-prune( criteria : Function ) : Boolean
-find_node( logic_rule : Dict ) : Node
-get_rules() : List&lt;String&gt;
-to_string() : String<y:LabelModel>
+          prune_func : Function,
+          prune_func_args : List ) : Void
+calculate_num_nodes() : Integer
+get_leaves() : List&lt;Node&gt;
+prune( prune_func : Function,
+           prune_func_args : List ) : Boolean
+classify( data_points : pandas.DataFrame,
+            cost_sensitive : Boolean,
+            cost_matrix : Dict&lt;Number&gt; )
+  : List&lt;String&gt;
+__str__() : String<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -45,18 +61,24 @@ to_string() : String<y:LabelModel>
       </data>
     </node>
     <node id="n1">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="110.0" width="124.0" x="120.5" y="342.0"/>
+          <y:Geometry height="208.0" width="195.0" x="83.0" y="355.0"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.48046875" x="40.259765625" y="4.0">Branch</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="74.6640625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="122.037109375" x="2.0" y="30.1328125">parent : Node
+          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="43.48046875" x="75.759765625" y="4.0">Branch</y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="173.59375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="191.470703125" x="2.0" y="30.1328125">parent : Node
 child : Node
-test_as_text : String
------------------
-to_string() : String
+split_test : Split_Test
+---------------------------
+Branch( parent : Node,
+            child : Node,
+            split_test : Split_Test )
+__str__() : String
+__eq__( self : Node,
+            other : Node ) : Boolean
+__ ne__( self : Node,
+             other : Node ) : Boolean
 <y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
@@ -71,21 +93,90 @@ to_string() : String
       </data>
     </node>
     <node id="n2">
-      <data key="d5"/>
       <data key="d6">
         <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
-          <y:Geometry height="159.0" width="230.0" x="67.5" y="129.0"/>
+          <y:Geometry height="604.6666666666667" width="290.0" x="35.5" y="-295.16666666666663"/>
           <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
           <y:BorderStyle color="#000000" type="line" width="1.0"/>
-          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="97.7626953125" y="4.0">Node</y:NodeLabel>
-          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="117.0625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="226.1875" x="2.0" y="30.1328125">is_leaf : Boolean
+          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="34.474609375" x="127.7626953125" y="4.0">Node</y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="569.3125" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="288.677734375" x="2.0" y="30.1328125">is_leaf : Boolean
 is_root : Boolean
 data_points : pandas.DataFrame
+class_attribute : String
+positive_class : String
+attribute_types : List
 class_supports : Dict
---------------------------------
-split( test : Function ) : Boolean
-prune( criteria : Function ) : Boolean
-to_string() : String<y:LabelModel>
+parent : Node
+children : List&lt;Node&gt;
+parent_branch : Branch
+child_branches : List&lt;Branch&gt;
+-----------------------------------------
+Node( data : pandas.DataFrame,
+          class_attribute : String,
+          positive_class : String,
+          build : Boolean,
+          split_func : Function,
+          split_func_args : List
+          is_root : Boolean,
+          parent : Node,
+          parent_branch : Branch )
+split( split_func : Function,
+        recursive : Boolean,
+        split_func_args ) : Boolean
+prune( prune_func : Function,
+           prune_func_args ) : Boolean
+get_possible_splits() : List&lt;Split_Test&gt;
+get_split_supports( split_test : Split_Test,
+                            posneg : Boolean )
+  : List&lt;Dict&gt;
+num_records() : Number
+num_errors( cost_sensitive : Boolean,
+                   cost_matrix : Dict ) : Number
+num_positive() : Number
+num_negative() : Number
+__str__() : String
+__eq__( self : Node,
+            other : Node ) : Boolean
+__ ne__( self : Node,
+             other : Node ) : Boolean<y:LabelModel>
+              <y:ErdAttributesNodeLabelModel/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:ErdAttributesNodeLabelModelParameter/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:StyleProperties>
+            <y:Property class="java.lang.Boolean" name="y.view.ShadowNodePainter.SHADOW_PAINTING" value="true"/>
+          </y:StyleProperties>
+        </y:GenericNode>
+      </data>
+    </node>
+    <node id="n3">
+      <data key="d6">
+        <y:GenericNode configuration="com.yworks.entityRelationship.big_entity">
+          <y:Geometry height="291.0" width="297.0" x="369.5" y="313.5"/>
+          <y:Fill color="#FFCC00" color2="#FFFF00" transparent="false"/>
+          <y:BorderStyle color="#000000" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" backgroundColor="#CC66FF" configuration="com.yworks.entityRelationship.label.name" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasLineColor="false" height="18.1328125" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="60.3203125" x="118.33984375" y="4.0">Split_Test</y:NodeLabel>
+          <y:NodeLabel alignment="left" autoSizePolicy="content" configuration="com.yworks.entityRelationship.label.attributes" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="258.390625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="top" visible="true" width="295.62109375" x="2.0" y="30.1328125">attribute_type : String
+attribute : String
+split_value : Float OR String
+operator : String
+------------------------------------------
+Split_Test( attribute_type : String,
+                attribute : String,
+                split_value : Float OR String,
+                operator: String )
+is_numerical() : Boolean
+is_categorical() : Boolean
+test_data_point( data_point : pandas.DataFrame )
+  : Boolean
+__str__() : String
+__eq__( self : Node,
+            other : Node ) : Boolean
+__ ne__( self : Node,
+             other : Node ) : Boolean
+<y:LabelModel>
               <y:ErdAttributesNodeLabelModel/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -99,7 +190,6 @@ to_string() : String<y:LabelModel>
       </data>
     </node>
     <edge id="e0" source="n2" target="n0">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -110,10 +200,9 @@ to_string() : String<y:LabelModel>
       </data>
     </edge>
     <edge id="e1" source="n0" target="n2">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="-74.74999999999994" ty="0.0"/>
+          <y:Path sx="0.0" sy="0.0" tx="-94.24999999999991" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="crows_foot_one_optional" target="none"/>
           <y:BendStyle smoothed="false"/>
@@ -121,7 +210,6 @@ to_string() : String<y:LabelModel>
       </data>
     </edge>
     <edge id="e2" source="n2" target="n1">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
@@ -132,12 +220,31 @@ to_string() : String<y:LabelModel>
       </data>
     </edge>
     <edge id="e3" source="n1" target="n2">
-      <data key="d9"/>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="crows_foot_many" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e4" source="n1" target="n3">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="crows_foot_one" target="none"/>
+          <y:BendStyle smoothed="false"/>
+        </y:PolyLineEdge>
+      </data>
+    </edge>
+    <edge id="e5" source="n3" target="n1">
+      <data key="d10">
+        <y:PolyLineEdge>
+          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0"/>
+          <y:LineStyle color="#000000" type="line" width="1.0"/>
+          <y:Arrows source="crows_foot_one" target="none"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
       </data>
