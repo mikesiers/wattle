@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../')
-from src.wattle import Branch, Node, Split_Test
+from wattle import Branch, Node, Split_Test
 import unittest
 
 class test_branch_class(unittest.TestCase):

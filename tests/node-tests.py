@@ -4,7 +4,7 @@ import unittest
 import pandas as pd
 import datacost as dc
 sys.path.append('../')
-from src.wattle import Node
+from wattle import Node
 
 def cost_reduction_split(node, positive_class, cost_matrix):
   """Finds and returns the best split based on expected cost.

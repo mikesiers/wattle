@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../')
-from src.wattle import Tree
+from wattle import Tree
 import unittest
 import pandas as pd
 import datacost as dc

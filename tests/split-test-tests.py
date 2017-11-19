@@ -1,7 +1,7 @@
 import sys
 import unittest
 sys.path.append('../')
-from src.wattle import Split_Test
+from wattle import Split_Test
 
 class test_split_test_class(unittest.TestCase):
   def test_is_numerical(self):
